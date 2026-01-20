@@ -17,5 +17,11 @@ export default defineConfig({
         watch: {
             ignored: ['**/storage/framework/views/**'],
         },
+        proxy: {
+            '^/(?!@vite|@vite/client|resources|node_modules).+': {
+                target: 'http://localhost:8000',
+                changeOrigin: true,
+            },
+        },
     },
 });
