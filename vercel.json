@@ -1,6 +1,5 @@
 {
     "version": 2,
-    "framework": null,
     "functions": {
         "api/*.php": {
             "runtime": "vercel-php@0.7.1"
@@ -8,8 +7,16 @@
     },
     "routes": [
         {
-            "src": "/(css|js|images|vendor|fonts|favicon.ico|build)/(.*)",
+            "src": "/build/(.*)",
+            "dest": "/public/build/$1"
+        },
+        {
+            "src": "/(css|js|images|fonts)/(.*)",
             "dest": "/public/$1/$2"
+        },
+        {
+            "src": "/favicon.ico",
+            "dest": "/public/favicon.ico"
         },
         {
             "src": "/(.*)",
@@ -17,11 +24,9 @@
         }
     ],
     "env": {
-        "APP_CONFIG_CACHE": "/tmp/config.php",
-        "APP_EVENTS_CACHE": "/tmp/events.php",
-        "APP_PACKAGES_CACHE": "/tmp/packages.php",
-        "APP_ROUTES_CACHE": "/tmp/routes.php",
-        "VIEW_COMPILED_PATH": "/tmp",
-        "CACHE_STORE": "array"
+        "APP_ENV": "production",
+        "APP_DEBUG": "false",
+        "CACHE_STORE": "array",
+        "SESSION_DRIVER": "cookie"
     }
 }
