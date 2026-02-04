@@ -13,12 +13,22 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'phone',
+        'address',
+        'ktp_number',
+        'ktp_verified_at',
+        'theme_preference',
     ];
 
     // Relasi ke Rental
     public function rentals()
     {
         return $this->hasMany(Rental::class);
+    }
+
+    public function cart()
+    {
+        return $this->hasOne(Cart::class);
     }
 
     // Method untuk mendapatkan inisial nama

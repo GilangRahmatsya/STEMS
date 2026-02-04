@@ -72,6 +72,7 @@ class Photobooth extends Component
             'title' => $this->eventTitle,
             'strips_count' => $this->stripsCount,
             'price_per_strip' => $this->pricePerStrip,
+            'is_active' => true, // New events are active by default
         ];
 
         if ($this->editingEvent) {

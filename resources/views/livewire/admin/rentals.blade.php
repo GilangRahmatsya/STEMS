@@ -11,15 +11,21 @@
         </select>
     </div>
 
-    @if(session('message'))
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+    <div
+        wire:ignore
+        x-data
+        x-init="setTimeout(() => $el.style.display='block', 300)"
+        style="display:none"
+        class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4"
+    >
+        @if(session('message'))
             {{ session('message') }}
-        </div>
-    @endif
+        @endif
+    </div>
 
     <div class="space-y-4">
         @forelse ($rentals as $rental)
-            <div class="border rounded-lg p-4 bg-white dark:bg-zinc-900">
+            <div class="border rounded-lg p-4 bg-white dark:bg-gray-800">
                 <div class="flex justify-between items-start">
                     <div>
                         <h2 class="font-semibold text-lg">{{ $rental->item->name }}</h2>

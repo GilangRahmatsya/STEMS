@@ -1,0 +1,105 @@
+{
+  "diagnostics": {
+    "undefinedMethods": false,
+    "undefinedFunctions": false,
+    "undefinedVariable": true,
+    "undefinedConstant": false,
+    "undefinedProperty": false,
+    "unusedUseDeclaration": false,
+    "implementationErrors": false,
+    "syntaxError": true,
+    "parseError": true,
+    "argumentCount": false,
+    "typeError": false
+  },
+  "analysis": {
+    "onSave": true,
+    "typeAssertion": false,
+    "nullableReturnType": false,
+    "documentationKeywords": ["@deprecated"],
+    "bare": false,
+    "excludePaths": [
+      "**/vendor/**"
+    ]
+  },
+  "files": {
+    "maxSize": 1000000,
+    "exclude": [
+      "**/.git",
+      "**/node_modules",
+      "**/vendor",
+      "**/storage",
+      "**/bootstrap/cache",
+      "**/.env*"
+    ]
+  },
+  "format": {
+    "enable": false
+  },
+  "completion": {
+    "maxItems": 100,
+    "fullyQualifyGlobalConstantsAndFunctions": false,
+    "insertUseDeclaration": false
+  },
+  "environment": {
+    "includePaths": [],
+    "stubs": [
+      "bcmath",
+      "bz2",
+      "calendar",
+      "com_dotnet",
+      "core",
+      "ctype",
+      "curl",
+      "date",
+      "dba",
+      "dom",
+      "enchant",
+      "exif",
+      "fileinfo",
+      "filter",
+      "ftp",
+      "gd",
+      "gettext",
+      "gmp",
+      "hash",
+      "iconv",
+      "imap",
+      "intl",
+      "json",
+      "ldap",
+      "libxml",
+      "mbstring",
+      "mysqli",
+      "openssl",
+      "pcntl",
+      "pcre",
+      "pdo",
+      "pgsql",
+      "posix",
+      "random",
+      "reflection",
+      "session",
+      "shmop",
+      "simplexml",
+      "sockets",
+      "sodium",
+      "sqlite3",
+      "standard",
+      "statistics",
+      "streams",
+      "sysvmsg",
+      "sysvsem",
+      "sysvshm",
+      "tidy",
+      "tokenizer",
+      "xml",
+      "xmlreader",
+      "xmlrpc",
+      "xmlwriter",
+      "yaml",
+      "zip",
+      "zlib"
+    ]
+  }
+}

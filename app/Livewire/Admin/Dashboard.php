@@ -2,22 +2,51 @@
 
 namespace App\Livewire\Admin;
 
-use Livewire\Component;
 use App\Models\Item;
 use App\Models\Rental;
-use Illuminate\Support\Facades\DB;
+use App\Models\User;
+use App\Models\FinancialRecord;
+use Carbon\Carbon;
+use Livewire\Component;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class Dashboard extends Component
 {
     public $lazy = true; // Enable lazy loading for better performance
-    public function render()
+    public $stats = [
+        'total_items' => 0,
+        'ready_items' => 0,
+        'on_rent' => 0,
+        'need_maintenance' => 0,
+        'total_assets' => 0,
+        'total_income' => 0,
+        'total_expenses' => 0,
+        'net_profit' => 0,
+        'cash_on_hand' => 0,
+        'assets_from_financial' => 0,
+    ];
+    public $condition_stats = [];
+    public $recent_rentals = [];
+    public $pending_rentals = [];
+    public $top_items = [];
+    public $asset_breakdown = [];
+    public $asset_by_status = [];
+    public $financial_breakdown = [];
+
+    public function mount()
     {
-        $cacheKey = 'admin_dashboard_stats';
-        
-        $stats = Cache::remember($cacheKey, 600, function () { // Cache 10 menit
-            $totalIncome = \App\Models\FinancialRecord::where('type', 'income')->sum('amount') ?? 0;
-            $totalExpense = \App\Models\FinancialRecord::where('type', 'expense')->sum('amount') ?? 0;
+        // Load data during mount
+        $this->loadDashboardData();
+        // Dispatch event untuk update chart saat komponen dimuat
+        $this->dispatch('financialDataUpdated');
+    }
+
+    public function loadDashboardData()
+    {
+        $stats = Cache::remember('admin_dashboard_stats', 600, function () {
+            $totalIncome = FinancialRecord::where('type', 'income')->sum('amount') ?? 0;
+            $totalExpense = FinancialRecord::where('type', 'expense')->sum('amount') ?? 0;
             
             return [
                 'total_items' => Item::count(),
@@ -30,28 +59,27 @@ class Dashboard extends Component
                 'total_income' => $totalIncome,
                 'total_expenses' => $totalExpense,
                 'net_profit' => $totalIncome - $totalExpense,
-                'cash_on_hand' => $totalIncome - $totalExpense, // Cash tersisa setelah semua pengeluaran
-                'assets_from_financial' => $totalIncome - $totalExpense + (Item::sum('buy_price') ?? 0), // Total aset dari financial + nilai barang
+                'cash_on_hand' => $totalIncome - $totalExpense,
+                'assets_from_financial' => $totalIncome - $totalExpense + (Item::sum('buy_price') ?? 0),
             ];
         });
 
-        // Kondisi items untuk pie chart - cache juga
-        $condition_stats = Cache::remember('admin_condition_stats', 600, function () {
+        $this->stats = array_merge($this->stats, $stats ?? []);
+        
+        $this->condition_stats = Cache::remember('admin_condition_stats', 600, function () {
             return Item::select('condition', DB::raw('count(*) as total'))
                 ->groupBy('condition')
                 ->get();
         });
 
-        // Recent rentals (5 terakhir) - cache 5 menit
-        $recent_rentals = Cache::remember('admin_recent_rentals', 300, function () {
+        $this->recent_rentals = Cache::remember('admin_recent_rentals', 300, function () {
             return Rental::with(['user', 'item'])
                 ->latest()
                 ->take(5)
                 ->get();
         });
 
-        // Pending rentals yang perlu approval - cache 2 menit
-        $pending_rentals = Cache::remember('admin_pending_rentals', 120, function () {
+        $this->pending_rentals = Cache::remember('admin_pending_rentals', 120, function () {
             return Rental::with(['user', 'item'])
                 ->where('status', 'pending')
                 ->latest()
@@ -59,8 +87,7 @@ class Dashboard extends Component
                 ->get();
         });
 
-        // Top rented items - cache 10 menit
-        $top_items = Cache::remember('admin_top_items', 600, function () {
+        $this->top_items = Cache::remember('admin_top_items', 600, function () {
             return Item::withCount(['rentals' => function($query) {
                     $query->where('status', 'approved');
                 }])
@@ -69,62 +96,56 @@ class Dashboard extends Component
                 ->get();
         });
 
-        // Asset breakdown by category - cache 10 menit
-        $asset_breakdown = Cache::remember('admin_asset_breakdown', 600, function () {
-            return Item::select('category_id', \DB::raw('COUNT(*) as item_count'), \DB::raw('SUM(buy_price) as total_value'))
+        $this->asset_breakdown = Cache::remember('admin_asset_breakdown', 600, function () {
+            return Item::select('category_id', DB::raw('COUNT(*) as item_count'), DB::raw('SUM(buy_price) as total_value'))
                 ->with('category:id,name')
                 ->groupBy('category_id')
                 ->orderBy('total_value', 'desc')
                 ->get();
         });
 
-        // Asset breakdown by status - cache 10 menit
-        $asset_by_status = Cache::remember('admin_asset_by_status', 600, function () {
-            return Item::select('status', \DB::raw('COUNT(*) as item_count'), \DB::raw('SUM(buy_price) as total_value'))
+        $this->asset_by_status = Cache::remember('admin_asset_by_status', 600, function () {
+            return Item::select('status', DB::raw('COUNT(*) as item_count'), DB::raw('SUM(buy_price) as total_value'))
                 ->groupBy('status')
                 ->orderBy('total_value', 'desc')
                 ->get();
         });
 
-        // Financial breakdown untuk chart - cache 10 menit
-        $financial_breakdown = Cache::remember('admin_financial_breakdown', 600, function () {
+        $this->financial_breakdown = Cache::remember('admin_financial_breakdown', 600, function () {
             return [
-                'income' => \App\Models\FinancialRecord::where('type', 'income')
-                    ->selectRaw('DATE_TRUNC(\'month\', date) as month, SUM(amount) as total')
+                'income' => FinancialRecord::where('type', 'income')
+                    ->selectRaw('strftime(\'%Y-%m\', date) as month, SUM(amount) as total')
                     ->groupBy('month')
                     ->orderBy('month', 'desc')
                     ->take(12)
                     ->get(),
-                'expense' => \App\Models\FinancialRecord::where('type', 'expense')
-                    ->selectRaw('DATE_TRUNC(\'month\', date) as month, SUM(amount) as total')
+                'expense' => FinancialRecord::where('type', 'expense')
+                    ->selectRaw('strftime(\'%Y-%m\', date) as month, SUM(amount) as total')
                     ->groupBy('month')
                     ->orderBy('month', 'desc')
                     ->take(12)
                     ->get(),
             ];
         });
-
-        return view('livewire.admin.dashboard', compact(
-            'stats',
-            'condition_stats',
-            'recent_rentals',
-            'pending_rentals',
-            'top_items',
-            'financial_breakdown',
-            'asset_breakdown',
-            'asset_by_status'
-        ));
     }
 
-    public function mount()
+    public function render()
     {
-        // Dispatch event untuk update chart saat komponen dimuat
-        $this->dispatch('financialDataUpdated');
+        return view('livewire.admin.dashboard', [
+            'stats' => $this->stats,
+            'condition_stats' => $this->condition_stats,
+            'recent_rentals' => $this->recent_rentals,
+            'pending_rentals' => $this->pending_rentals,
+            'top_items' => $this->top_items,
+            'financial_breakdown' => $this->financial_breakdown,
+            'asset_breakdown' => $this->asset_breakdown,
+            'asset_by_status' => $this->asset_by_status,
+        ]);
     }
 
     public function refreshStats()
     {
-        // Clear cache dan refresh data
+        // Clear cache and reload data
         Cache::forget('admin_dashboard_stats');
         Cache::forget('admin_condition_stats');
         Cache::forget('admin_recent_rentals');
@@ -134,6 +155,9 @@ class Dashboard extends Component
         Cache::forget('admin_asset_breakdown');
         Cache::forget('admin_asset_by_status');
 
+        // Reload data
+        $this->loadDashboardData();
+        
         // Dispatch event untuk update chart
         $this->dispatch('financialDataUpdated');
     }

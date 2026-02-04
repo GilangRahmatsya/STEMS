@@ -53,7 +53,6 @@ class DamagedItems extends Component
         ]);
 
         $this->reset(['selectedItem', 'damage_description', 'repair_cost', 'showReportForm']);
-        $this->loadDamagedItems();
 
         session()->flash('message', 'Damage reported and financial record created successfully.');
     }
@@ -63,7 +62,6 @@ class DamagedItems extends Component
         $item = Item::findOrFail($itemId);
         $item->update(['condition' => 'Good']);
 
-        $this->loadDamagedItems();
         session()->flash('message', 'Item marked as repaired.');
     }
 

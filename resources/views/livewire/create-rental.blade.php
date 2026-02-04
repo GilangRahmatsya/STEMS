@@ -57,19 +57,37 @@
             </div>
         </div>
 
-        <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-            <h3 class="font-semibold mb-2">Rental Summary</h3>
-            <p>Item: {{ $item->name }}</p>
-            <p>Price per day: Rp {{ number_format($item->rent_price) }}</p>
-            @if($start_date && $end_date)
-                <p>Duration: {{ \Carbon\Carbon::parse($start_date)->diffInDays(\Carbon\Carbon::parse($end_date)) + 1 }} days</p>
-                <p class="font-bold">Total: Rp {{ number_format((\Carbon\Carbon::parse($start_date)->diffInDays(\Carbon\Carbon::parse($end_date)) + 1) * $item->rent_price) }}</p>
-            @endif
+        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h3 class="font-semibold mb-3 text-blue-800 dark:text-blue-200">💰 Total Pembayaran</h3>
+            <div class="space-y-2">
+                <div class="flex justify-between">
+                    <span class="text-gray-600 dark:text-gray-400">Item:</span>
+                    <span class="font-medium">{{ $item->name }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600 dark:text-gray-400">Harga per hari:</span>
+                    <span class="font-medium">Rp {{ number_format($item->rent_price) }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-gray-600 dark:text-gray-400">Durasi:</span>
+                    <span class="font-medium">{{ $this->totalDays }} hari</span>
+                </div>
+                <div class="flex justify-between text-lg font-bold border-t border-blue-300 dark:border-blue-700 pt-2">
+                    <span class="text-blue-800 dark:text-blue-200">Total yang harus dibayar:</span>
+                    <span class="text-blue-900 dark:text-blue-100">Rp {{ number_format($this->totalPrice) }}</span>
+                </div>
+            </div>
         </div>
 
         <div class="flex space-x-4">
-            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">
-                Submit Rental Request
+            {{-- Debug: canSubmit = {{ $this->canSubmit ? 'true' : 'false' }} --}}
+            <button
+                type="submit"
+                wire:loading.attr="disabled"
+                class="w-full px-4 py-2 rounded bg-blue-600 hover:bg-blue-700 text-white"
+            >
+                <span wire:loading.remove>Submit Rental (Debug)</span>
+                <span wire:loading>Processing...</span>
             </button>
             <a href="{{ route('user.items.index') }}" class="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400">
                 Cancel

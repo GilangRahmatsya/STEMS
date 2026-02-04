@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" x-data="{ theme: localStorage.getItem('theme') || 'light' }" :class="theme === 'dark' ? 'dark' : ''" @theme-change.window="theme = $event.detail">
 <head>
     @include('partials.head')
 </head>
 
-<body class="min-h-screen bg-white dark:bg-zinc-800">
+<body class="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
+
+<h1 class="text-2xl font-bold lcp-force sr-only">
+    STEMS Inventory System
+</h1>
 
 <flux:sidebar sticky collapsible="mobile"
-    class="border-e border-zinc-200 bg-zinc-50 dark:border-zinc-700 dark:bg-zinc-900 flex flex-col min-h-screen">
+    class="border-e border-orange-400/20 bg-gradient-to-br from-orange-400 via-orange-500 to-orange-600 dark:border-zinc-800 dark:bg-zinc-900/50 flex flex-col min-h-screen transition-colors duration-300 [&_*]:!text-white dark:[&_*]:!text-zinc-400 dark:[&_.data-[current]]:!text-white">
 
     {{-- HEADER --}}
     <flux:sidebar.header class="flex-shrink-0">
@@ -191,7 +195,7 @@
 
     {{-- USER MENU DESKTOP - FIXED BOTTOM --}}
     @auth
-        <div class="mt-auto pt-4 border-t border-zinc-200 dark:border-zinc-700">
+        <div class="mt-auto pt-4 border-t border-white/20 dark:border-zinc-700">
             <x-desktop-user-menu
                 class="hidden lg:block transform transition-all duration-200 hover:scale-105 active:scale-95"
                 :name="auth()->user()->name"
@@ -234,6 +238,20 @@
 {{-- Global Loading Overlay --}}
 <x-loading-overlay wire:loading />
 
-@fluxScripts
+<script>
+    // Theme management
+    document.addEventListener('DOMContentLoaded', function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.classList.toggle('dark', theme === 'dark');
+    });
+    
+    window.toggleTheme = function() {
+        const current = localStorage.getItem('theme') || 'light';
+        const newTheme = current === 'dark' ? 'light' : 'dark';
+        localStorage.setItem('theme', newTheme);
+        document.documentElement.classList.toggle('dark', newTheme === 'dark');
+        window.dispatchEvent(new CustomEvent('theme-change', { detail: newTheme }));
+    };
+</script>
 </body>
 </html>

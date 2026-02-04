@@ -44,7 +44,10 @@ class Items extends Component
 
     public function getItemsProperty()
     {
-        return Item::with('category')->latest()->paginate($this->perPage);
+        return Item::select('id', 'name', 'description', 'category_id', 'condition', 'location', 'quantity', 'rent_price', 'status', 'image', 'created_at')
+            ->with('category:id,name,icon')
+            ->latest()
+            ->paginate($this->perPage);
     }
 
     public function save()
@@ -68,7 +71,6 @@ class Items extends Component
         ]);
 
         $this->resetForm();
-        $this->loadItems();
     }
 
     public function edit($id)
@@ -113,7 +115,6 @@ class Items extends Component
         $item->update($data);
 
         $this->resetForm();
-        $this->loadItems();
     }
 
     public function delete($id)
@@ -131,8 +132,6 @@ class Items extends Component
             $item->delete();
             session()->flash('message', 'Item deleted successfully.');
         }
-
-        $this->loadItems();
     }
 
     public function resetForm()

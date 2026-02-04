@@ -3,11 +3,13 @@
 namespace App\Livewire;
 
 use Livewire\Component;
+use Livewire\WithPagination;
 use App\Models\Item;
 use App\Models\Category;
 
 class Items extends Component
 {
+    use WithPagination;
     public $selectedCategory = '';
     public $search = '';
     public $sortBy = 'name';

@@ -54,6 +54,12 @@ class CategorySeeder extends Seeder
                 'description' => 'Camera lenses and accessories',
                 'icon' => '🔍',
                 'color' => '#EC4899'
+            ],
+            [
+                'name' => 'Booth',
+                'description' => 'Photobooth equipment and setups',
+                'icon' => '📸',
+                'color' => '#F97316'
             ]
         ];
 

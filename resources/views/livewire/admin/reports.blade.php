@@ -1,72 +1,131 @@
-<div class="p-6">
-    <h1 class="text-2xl font-bold mb-6">Reports</h1>
-
-    <div class="mb-6 flex space-x-4">
+<div class="space-y-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Start Date</label>
-            <input type="date" wire:model.live="startDate" class="mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+            <h1 class="text-3xl font-bold text-zinc-900 dark:text-white">Reports Overview</h1>
+            <p class="text-zinc-500 dark:text-zinc-400 mt-2">Detailed insights and performance metrics.</p>
         </div>
-        <div>
-            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">End Date</label>
-            <input type="date" wire:model.live="endDate" class="mt-1 border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+        <div class="flex items-center gap-2">
+             <span class="text-xs font-medium text-zinc-500 bg-zinc-100 dark:bg-zinc-800 dark:text-zinc-300 px-3 py-1.5 rounded-full ring-1 ring-inset ring-zinc-200 dark:ring-zinc-700">
+                Admin Access
+            </span>
         </div>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold text-blue-800 dark:text-blue-200">Total Rentals</h3>
-            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ $totalRentals }}</p>
-        </div>
-        <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold text-green-800 dark:text-green-200">Approved Rentals</h3>
-            <p class="text-2xl font-bold text-green-600 dark:text-green-400">{{ $approvedRentals }}</p>
-        </div>
-        <div class="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold text-yellow-800 dark:text-yellow-200">Pending Rentals</h3>
-            <p class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">{{ $pendingRentals }}</p>
-        </div>
-        <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg">
-            <h3 class="text-lg font-semibold text-purple-800 dark:text-purple-200">Total Revenue</h3>
-            <p class="text-2xl font-bold text-purple-600 dark:text-purple-400">Rp {{ number_format($totalRevenue) }}</p>
+    <!-- Filters -->
+    <div class="bg-white dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 shadow-sm">
+        <h3 class="text-sm font-semibold text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
+            <flux:icon.calendar-days class="w-4 h-4 text-zinc-400" />
+            Date Range Filter
+        </h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">Start Date</label>
+                <div class="relative">
+                    <input type="date" wire:model.live="startDate" class="w-full pl-3 pr-10 py-2 text-sm border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white rounded-lg shadow-sm focus:ring-orange-500 focus:border-orange-500 transition-shadow">
+                </div>
+            </div>
+            <div>
+                <label class="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">End Date</label>
+                <div class="relative">
+                    <input type="date" wire:model.live="endDate" class="w-full pl-3 pr-10 py-2 text-sm border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white rounded-lg shadow-sm focus:ring-orange-500 focus:border-orange-500 transition-shadow">
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 hover:shadow-lg transition-shadow">
+             <div class="flex items-center justify-between mb-4">
+                <span class="p-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg border border-blue-100 dark:border-blue-800">
+                    <flux:icon.clipboard-document-list class="w-5 h-5" />
+                </span>
+                <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Total Rentals</span>
+            </div>
+            <p class="text-3xl font-bold text-zinc-900 dark:text-white">{{ $totalRentals }}</p>
+        </div>
+
+        <div class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 hover:shadow-lg transition-shadow">
+             <div class="flex items-center justify-between mb-4">
+                <span class="p-2 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400 rounded-lg border border-emerald-100 dark:border-emerald-800">
+                    <flux:icon.check-circle class="w-5 h-5" />
+                </span>
+                <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Approved</span>
+            </div>
+            <p class="text-3xl font-bold text-zinc-900 dark:text-white">{{ $approvedRentals }}</p>
+        </div>
+
+        <div class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 hover:shadow-lg transition-shadow">
+             <div class="flex items-center justify-between mb-4">
+                <span class="p-2 bg-amber-50 dark:bg-amber-900/20 text-amber-600 dark:text-amber-400 rounded-lg border border-amber-100 dark:border-amber-800">
+                    <flux:icon.clock class="w-5 h-5" />
+                </span>
+                <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Pending</span>
+            </div>
+            <p class="text-3xl font-bold text-zinc-900 dark:text-white">{{ $pendingRentals }}</p>
+        </div>
+
+        <div class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6 hover:shadow-lg transition-shadow">
+             <div class="flex items-center justify-between mb-4">
+                <span class="p-2 bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 rounded-lg border border-purple-100 dark:border-purple-800">
+                    <flux:icon.banknotes class="w-5 h-5" />
+                </span>
+                <span class="text-xs font-medium text-zinc-400 uppercase tracking-wider">Revenue</span>
+            </div>
+            <p class="text-3xl font-bold text-purple-600 dark:text-purple-400 truncate">Rp {{ number_format($totalRevenue) }}</p>
+        </div>
+    </div>
+
+    <!-- Recent Data & Popular Items -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div class="bg-white dark:bg-zinc-900 rounded-lg p-4">
-            <h3 class="text-lg font-semibold mb-4">Recent Rentals</h3>
-            <div class="space-y-2">
+        <!-- Recent Rentals -->
+        <div class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-6">Recent Rentals</h3>
+            <div class="space-y-4">
                 @forelse($rentals->take(10) as $rental)
-                    <div class="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-                        <div>
-                            <p class="font-medium">{{ $rental->item->name }}</p>
-                            <p class="text-sm text-gray-500">{{ $rental->user->name }}</p>
+                    <div class="flex items-center justify-between p-3 rounded-lg border border-zinc-100 dark:border-zinc-700/50 bg-zinc-50 dark:bg-zinc-900/30 hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors">
+                        <div class="min-w-0 flex-1 pr-4">
+                            <p class="font-medium text-sm text-zinc-900 dark:text-white truncate">{{ $rental->item->name }}</p>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <span class="text-xs text-zinc-500 dark:text-zinc-400 truncate">{{ $rental->user->name }}</span>
+                                <span class="text-zinc-300 dark:text-zinc-600">•</span>
+                                <span class="text-xs text-zinc-500">{{ $rental->created_at->diffForHumans() }}</span>
+                            </div>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-medium">Rp {{ number_format($rental->total_price) }}</p>
-                            <p class="text-xs text-gray-500">{{ $rental->created_at->format('d M') }}</p>
+                           <span class="block text-sm font-semibold text-zinc-900 dark:text-white">Rp {{ number_format($rental->total_price) }}</span>
                         </div>
                     </div>
                 @empty
-                    <p class="text-gray-500">No rentals in this period.</p>
+                    <div class="text-center py-8 text-zinc-500 dark:text-zinc-400">
+                        <flux:icon.inbox class="w-10 h-10 mx-auto mb-2 text-zinc-300" />
+                        No rentals found.
+                    </div>
                 @endforelse
             </div>
         </div>
 
-        <div class="bg-white dark:bg-zinc-900 rounded-lg p-4">
-            <h3 class="text-lg font-semibold mb-4">Most Popular Items</h3>
-            <div class="space-y-2">
+        <!-- Most Popular Items -->
+        <div class="bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-6">
+            <h3 class="text-lg font-semibold text-zinc-900 dark:text-white mb-6">Most Popular Items</h3>
+            <div class="space-y-4">
                 @forelse($popularItems as $item)
-                    <div class="flex justify-between items-center py-2 border-b border-gray-200 dark:border-gray-700">
-                        <div>
-                            <p class="font-medium">{{ $item->name }}</p>
-                            <p class="text-sm text-gray-500">{{ $item->category?->name ?? 'No Category' }}</p>
+                    <div class="flex items-center justify-between p-3 rounded-lg border border-zinc-100 dark:border-zinc-700/50 hover:bg-zinc-50 dark:hover:bg-zinc-900/30 transition-colors">
+                        <div class="min-w-0 flex-1 pr-4">
+                            <p class="font-medium text-sm text-zinc-900 dark:text-white truncate">{{ $item->name }}</p>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400 truncate mt-0.5">{{ $item->category?->name ?? 'Uncategorized' }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-sm font-medium">{{ $item->rentals_count }} rentals</p>
+                            <span class="px-2 py-1 rounded-md text-xs font-medium bg-orange-50 text-orange-600 dark:bg-orange-900/20 dark:text-orange-400 border border-orange-100 dark:border-orange-800">
+                                {{ $item->rentals_count }} rentals
+                            </span>
                         </div>
                     </div>
                 @empty
-                    <p class="text-gray-500">No data available.</p>
+                    <div class="text-center py-8 text-zinc-500 dark:text-zinc-400">
+                        <flux:icon.star class="w-10 h-10 mx-auto mb-2 text-zinc-300" />
+                        No popular items data.
+                    </div>
                 @endforelse
             </div>
         </div>

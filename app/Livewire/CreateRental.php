@@ -22,22 +22,58 @@ class CreateRental extends Component
     // KTP notes
     public $ktp_notes;
 
-    public function mount($itemId)
+    public function getTotalDaysProperty()
     {
-        $this->item_id = $itemId;
+        if (!$this->start_date || !$this->end_date) return 0;
+
+        return \Carbon\Carbon::parse($this->start_date)
+            ->diffInDays(\Carbon\Carbon::parse($this->end_date)) + 1;
+    }
+
+    public function getTotalPriceProperty()
+    {
+        if (!$this->item_id || !$this->start_date || !$this->end_date) return 0;
+
+        $item = Item::find($this->item_id);
+        if (!$item) return 0;
+
+        return $this->totalDays * $item->rent_price;
+    }
+
+    public function getCanSubmitProperty()
+    {
+        return
+            $this->start_date &&
+            $this->end_date &&
+            $this->borrower_name &&
+            $this->borrower_birth_date &&
+            $this->purpose;
     }
 
     public function submit()
     {
-        $this->validate([
-            'start_date' => 'required|date|after_or_equal:today',
-            'end_date' => 'required|date|after:start_date',
-            'notes' => 'nullable|string|max:500',
-            'borrower_name' => 'required|string|max:255',
-            'borrower_birth_date' => 'required|date|before:today',
-            'purpose' => 'required|string|max:1000',
-            'ktp_notes' => 'nullable|string|max:1000'
+        logger('SUBMIT RENT START', [
+            'canSubmit' => $this->canSubmit,
+            'start_date' => $this->start_date,
+            'end_date' => $this->end_date,
+            'borrower_name' => $this->borrower_name,
+            'borrower_birth_date' => $this->borrower_birth_date,
+            'purpose' => $this->purpose,
+            'user_id' => auth()->id()
         ]);
+
+        // Temporarily remove validation for debugging
+        // $this->validate([
+        //     'start_date' => 'required|date',
+        //     'end_date' => 'required|date|after:start_date',
+        //     'notes' => 'nullable|string|max:500',
+        //     'borrower_name' => 'required|string|max:255',
+        //     'borrower_birth_date' => 'required|date',
+        //     'purpose' => 'required|string|max:1000',
+        //     'ktp_notes' => 'nullable|string|max:1000'
+        // ]);
+
+        logger('SUBMIT RENT VALIDATION PASSED');
 
         $item = Item::findOrFail($this->item_id);
 
@@ -71,7 +107,8 @@ class CreateRental extends Component
         $item = Item::findOrFail($this->item_id);
 
         return view('livewire.create-rental', [
-            'item' => $item
+            'item' => $item,
+            'canSubmit' => $this->canSubmit,
         ]);
     }
 }

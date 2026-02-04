@@ -104,5 +104,32 @@ php artisan serve  # Backend server
 - Route parameters use camelCase in Livewire mount methods
 - Date calculations are inclusive (start to end +1 day)
 - Admin routes require `can:is-admin` gate check
-- SQLite as default DB - ensure migrations work with SQLite syntax</content>
-<parameter name="filePath">c:\Users\Gilang Rahmatsya\STEMS\.github\copilot-instructions.md
+- SQLite as default DB - ensure migrations work with SQLite syntax
+
+## Deployment
+
+### Environment Setup
+- Use `.env.example` to create a new `.env` file
+- Set `APP_KEY`, `DB_CONNECTION`, and other environment-specific variables
+- For production, set `APP_ENV=production` and `APP_DEBUG=false`
+
+### Database Migration & Seeding
+- Run migrations: `php artisan migrate --force`
+- Seed the database: `php artisan db:seed --force` (optional)
+
+### File Storage
+- Ensure `storage` and `bootstrap/cache` directories are writable
+- For file uploads, configure cloud storage in `filesystems.php`
+
+### SSL & Security
+- Use Let's Encrypt or similar for SSL certificates
+- Redirect HTTP to HTTPS in the web server configuration
+
+### Monitoring & Logging
+- Configure logging in `config/logging.php`
+- Use Laravel Telescope or external services for monitoring (optional)
+
+### 
+
+- Schedule cron jobs for `php artisan schedule:run` every minute
+- Optimize the application: `php artisan optimize`

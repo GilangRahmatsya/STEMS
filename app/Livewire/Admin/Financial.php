@@ -154,7 +154,7 @@ class Financial extends Component
 
     public function getCategoriesProperty()
     {
-        return FinancialRecord::distinct('category')->pluck('category');
+        return FinancialRecord::select('category')->distinct()->get()->pluck('category');
     }
 
     public function render()

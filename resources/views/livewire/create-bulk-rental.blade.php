@@ -156,34 +156,54 @@
         </div>
 
         <!-- Summary and Submit -->
-        @if($selectedItemsData->count() > 0 && $start_date && $end_date)
         <div class="bg-white dark:bg-zinc-900 rounded-lg p-4 sm:p-6 shadow-sm">
             <h2 class="text-lg font-semibold mb-4">Rental Summary</h2>
 
-            <div class="space-y-2 mb-4">
-                <div class="flex justify-between">
-                    <span class="text-gray-600 dark:text-gray-400">Items:</span>
-                    <span class="font-medium">{{ $selectedItemsData->count() }} item(s)</span>
-                </div>
-                <div class="flex justify-between">
-                    <span class="text-gray-600 dark:text-gray-400">Duration:</span>
-                    <span class="font-medium">{{ \Carbon\Carbon::parse($start_date)->diffInDays(\Carbon\Carbon::parse($end_date)) + 1 }} days</span>
-                </div>
-                <div class="flex justify-between text-lg font-bold border-t border-gray-200 dark:border-zinc-700 pt-2">
-                    <span>Total Price:</span>
-                    <span class="text-indigo-600 dark:text-indigo-400">Rp {{ number_format($totalPrice, 0, ',', '.') }}</span>
+            @if($selectedItemsData->count() > 0 && $start_date && $end_date)
+            <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                <h3 class="font-semibold mb-3 text-green-800 dark:text-green-200">💰 Total Pembayaran</h3>
+                <div class="space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Jumlah item:</span>
+                        <span class="font-medium">{{ $selectedItemsData->count() }} item</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 dark:text-gray-400">Durasi:</span>
+                        <span class="font-medium">{{ \Carbon\Carbon::parse($start_date)->diffInDays(\Carbon\Carbon::parse($end_date)) + 1 }} hari</span>
+                    </div>
+                    <div class="text-sm text-gray-500 dark:text-gray-400 mb-2">
+                        Breakdown per item:
+                    </div>
+                    @foreach($selectedItemsData as $item)
+                    <div class="flex justify-between text-sm pl-4 border-l-2 border-green-300 dark:border-green-600">
+                        <span>{{ $item->name }} ({{ $this->itemQuantities[$item->id] ?? 1 }}x)</span>
+                        <span>Rp {{ number_format(($item->rent_price * ($this->itemQuantities[$item->id] ?? 1)) * (\Carbon\Carbon::parse($start_date)->diffInDays(\Carbon\Carbon::parse($end_date)) + 1)) }}</span>
+                    </div>
+                    @endforeach
+                    <div class="flex justify-between text-lg font-bold border-t border-green-300 dark:border-green-700 pt-2">
+                        <span class="text-green-800 dark:text-green-200">Total yang harus dibayar:</span>
+                        <span class="text-green-900 dark:text-green-100">Rp {{ number_format($this->totalPrice) }}</span>
+                    </div>
                 </div>
             </div>
+            @else
+            <div class="text-center py-8 text-gray-500 dark:text-gray-400">
+                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                </svg>
+                <p class="mt-2 text-sm">Select items and dates to see rental summary</p>
+            </div>
+            @endif
 
-            <button type="submit"
-                    wire:loading.attr="disabled"
-                    wire:loading.class="opacity-50 cursor-not-allowed"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-400 text-white font-medium py-3 px-4 rounded-md transition-colors flex items-center justify-center gap-2">
-                <x-loading-spinner wire:loading size="sm" class="text-white" />
-                <span wire:loading.remove>Submit Rental Request</span>
-                <span wire:loading>Submitting...</span>
+            <button
+                type="submit"
+                wire:loading.attr="disabled"
+                {{ $this->canSubmit ? '' : 'disabled' }}
+                class="w-full px-4 py-2 rounded {{ $this->canSubmit ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-400 cursor-not-allowed text-gray-200' }}"
+            >
+                <span wire:loading.remove>Submit Rental</span>
+                <span wire:loading>Processing...</span>
             </button>
         </div>
-        @endif
     </form>
 </div>

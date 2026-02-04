@@ -18,5 +18,14 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('is-admin', function ($user) {
             return $user->role === 'admin';
         });
+
+        // Auto-login admin for desktop mode (production only)
+        if (app()->isProduction() && !auth()->check()) {
+            // Check if running in Tauri desktop app
+            $userAgent = request()->userAgent();
+            if (str_contains($userAgent, 'Tauri') || str_contains($userAgent, 'tauri')) {
+                \Illuminate\Support\Facades\Auth::loginUsingId(1); // admin user
+            }
+        }
     }
 }

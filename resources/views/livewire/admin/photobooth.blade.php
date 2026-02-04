@@ -26,15 +26,15 @@
 
     <!-- Tabs -->
     <div class="mb-6">
-        <nav class="flex space-x-1 bg-gray-100 dark:bg-zinc-800 p-1 rounded-lg">
+        <nav class="flex space-x-1 bg-gray-100 dark:bg-gray-800 p-1 rounded-lg">
             <button
                 wire:click="switchTab('events')"
-                class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors {{ $activeTab === 'events' ? 'bg-white dark:bg-zinc-700 text-gray-900 dark:text-white shadow' : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-300' }}">
+                class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors {{ $activeTab === 'events' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300' }}">
                 Events
             </button>
             <button
                 wire:click="switchTab('queues')"
-                class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors {{ $activeTab === 'queues' ? 'bg-white dark:bg-zinc-700 text-gray-900 dark:text-white shadow' : 'text-gray-500 dark:text-zinc-400 hover:text-gray-700 dark:hover:text-zinc-300' }}">
+                class="flex-1 py-2 px-4 text-sm font-medium rounded-md transition-colors {{ $activeTab === 'queues' ? 'bg-white dark:bg-gray-700 text-gray-900 dark:text-white shadow' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300' }}">
                 Queues {{ $selectedEventId ? '(' . \App\Models\PhotoboothEvent::find($selectedEventId)?->title . ')' : '' }}
             </button>
         </nav>
@@ -42,28 +42,28 @@
 
     <!-- Events Tab -->
     @if($activeTab === 'events')
-        <div class="bg-white dark:bg-zinc-800 rounded-lg shadow overflow-hidden">
-            <div class="p-6 border-b border-gray-200 dark:border-zinc-700">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+            <div class="p-6 border-b border-gray-200 dark:border-gray-700">
                 <h2 class="text-lg font-medium text-gray-900 dark:text-white">Photobooth Events</h2>
                 <p class="mt-1 text-sm text-gray-600 dark:text-zinc-400">Manage your photobooth events and pricing.</p>
             </div>
 
             <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
-                    <thead class="bg-gray-50 dark:bg-zinc-700">
+                <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+                    <thead class="bg-gray-50 dark:bg-gray-700">
                         <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Title</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Package</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Price</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Revenue</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Actions</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase tracking-wider">Title</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase tracking-wider">Package</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase tracking-wider">Price</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase tracking-wider">Revenue</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-gray-300 uppercase tracking-wider">Actions</th>
                         </tr>
                     </thead>
-                    <tbody class="bg-white dark:bg-zinc-800 divide-y divide-gray-200 dark:divide-zinc-700">
+                    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                         @forelse($events as $event)
                             <tr>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-zinc-100">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-gray-100">
                                     {{ $event->title }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-zinc-100">
@@ -89,10 +89,14 @@
                                             <flux:icon.pencil class="w-4 h-4" />
                                         </flux:button>
                                         <flux:button variant="ghost" size="sm" wire:click="toggleEventStatus({{ $event->id }})">
-                                            <flux:icon.{{ $event->is_active ? 'eye-slash' : 'eye' }} class="w-4 h-4" />
+                                            @if ($event->is_active)
+                                                <flux:icon.eye-slash class="w-4 h-4" />
+                                            @else
+                                                <flux:icon.eye class="w-4 h-4" />
+                                            @endif
                                         </flux:button>
                                         <flux:button variant="ghost" size="sm" wire:click="deleteEvent({{ $event->id }})"
-                                                     onclick="return confirm('Are you sure you want to delete &quot;' + {{ json_encode($event->title) }} + '&quot;? This will permanently remove the event and all associated queues.')">
+                                                     onclick="return confirm('Are you sure you want to delete &quot;{{ addslashes($event->title) }}&quot;? This will permanently remove the event and all associated queues.')">
                                             <flux:icon.trash class="w-4 h-4 text-red-500" />
                                         </flux:button>
                                     </div>
@@ -100,7 +104,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-zinc-400">
+                                <td colspan="6" class="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                                     No photobooth events found.
                                 </td>
                             </tr>
@@ -134,12 +138,12 @@
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-zinc-700">
                         <thead class="bg-gray-50 dark:bg-zinc-700">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Customer</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Strips</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">WhatsApp</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Total</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Status</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-zinc-300 uppercase tracking-wider">Actions</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-zinc-300 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-zinc-300 uppercase tracking-wider">Strips</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-zinc-300 uppercase tracking-wider">WhatsApp</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-zinc-300 uppercase tracking-wider">Total</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-zinc-300 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-900 dark:text-zinc-300 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white dark:bg-zinc-800 divide-y divide-gray-200 dark:divide-zinc-700">
@@ -192,7 +196,7 @@
                                                 <flux:icon.check-circle class="w-4 h-4" />
                                             </flux:button>
                                             <flux:button variant="ghost" size="sm" wire:click="deleteQueue({{ $queue->id }})"
-                                                         onclick="return confirm('Are you sure you want to delete the queue for ' + {{ json_encode($queue->customer_name) }} + '? This will permanently remove their order.')">
+                                                         onclick="return confirm('Are you sure you want to delete the queue for {{ addslashes($queue->customer_name) }}? This will permanently remove their order.')">
                                                 <flux:icon.trash class="w-4 h-4 text-red-500" />
                                             </flux:button>
                                         </div>
@@ -229,30 +233,37 @@
     @endif
 
     <!-- Create/Edit Event Modal -->
-    <flux:modal name="event-modal" :show="$showEventModal" wire:model="showEventModal">
+    <flux:modal name="event-modal" :show="$showEventModal" @close="$wire.closeEventModal()">
         <div class="space-y-6">
-            <div>
-                <flux:heading size="lg">{{ $editingEvent ? 'Edit Photobooth Event' : 'Create Photobooth Event' }}</flux:heading>
-                <flux:subheading>Set up a new photobooth event with pricing.</flux:subheading>
+            <div class="flex items-center justify-between">
+                <div>
+                    <flux:heading size="lg">{{ $editingEvent ? 'Edit Photobooth Event' : 'Create Photobooth Event' }}</flux:heading>
+                    <flux:subheading>Set up a new photobooth event with pricing.</flux:subheading>
+                </div>
+                <button type="button" @click="$wire.closeEventModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form wire:submit="saveEvent" class="space-y-6">
                 <flux:field>
-                    <flux:label>Event Title</flux:label>
-                    <flux:input wire:model="eventTitle" placeholder="e.g., Wedding Reception, Birthday Party" required />
+                    <flux:label class="font-semibold text-gray-900 dark:text-gray-100">Event Title</flux:label>
+                    <flux:input wire:model="eventTitle" placeholder="e.g., Wedding Reception, Birthday Party" class="text-gray-900 dark:text-white" required />
                     <flux:error name="eventTitle" />
                 </flux:field>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <flux:field>
-                        <flux:label>Strips per Package</flux:label>
-                        <flux:input wire:model="stripsCount" type="number" min="1" required />
+                        <flux:label class="font-semibold text-gray-900 dark:text-gray-100">Strips per Package</flux:label>
+                        <flux:input wire:model="stripsCount" type="number" min="1" class="text-gray-900 dark:text-white" required />
                         <flux:error name="stripsCount" />
                     </flux:field>
 
                     <flux:field>
-                        <flux:label>Price per Strip (Rp)</flux:label>
-                        <flux:input wire:model="pricePerStrip" type="number" step="0.01" min="0" placeholder="15000" required />
+                        <flux:label class="font-semibold text-gray-900 dark:text-gray-100">Price per Strip (Rp)</flux:label>
+                        <flux:input wire:model="pricePerStrip" type="number" step="1000" placeholder="e.g., 150000" class="text-gray-900 dark:text-white" required />
                         <flux:error name="pricePerStrip" />
                     </flux:field>
                 </div>
@@ -281,11 +292,18 @@
     </flux:modal>
 
     <!-- Add Queue Modal -->
-    <flux:modal name="queue-modal" :show="$showQueueModal" wire:model="showQueueModal">
+    <flux:modal name="queue-modal" :show="$showQueueModal" @close="$wire.closeQueueModal()">
         <div class="space-y-6">
-            <div>
-                <flux:heading size="lg">Add New Queue</flux:heading>
-                <flux:subheading>Add a customer to the queue for {{ $selectedEventId && ($selectedEvent = \App\Models\PhotoboothEvent::find($selectedEventId))?->title ?? 'this event' }}.</flux:subheading>
+            <div class="flex items-center justify-between">
+                <div>
+                    <flux:heading size="lg">Add New Queue</flux:heading>
+                    <flux:subheading>Add a customer to the queue for {{ $selectedEventId && ($selectedEvent = \App\Models\PhotoboothEvent::find($selectedEventId))?->title ?? 'this event' }}.</flux:subheading>
+                </div>
+                <button type="button" @click="$wire.closeQueueModal()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
 
             <form wire:submit="saveQueue" class="space-y-6">

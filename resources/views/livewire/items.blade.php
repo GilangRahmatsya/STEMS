@@ -7,7 +7,7 @@
             {{-- Search --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Search</label>
-                <input type="text" wire:model.live.debounce.300ms="search"
+                <input type="text" wire:model.defer="search"
                        placeholder="Search items..."
                        class="w-full border-gray-300 dark:border-zinc-600 dark:bg-zinc-800 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
             </div>
@@ -15,7 +15,7 @@
             {{-- Category Filter --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Category</label>
-                <select wire:model.live="selectedCategory"
+                <select wire:model.defer="selectedCategory"
                         class="w-full border-gray-300 dark:border-zinc-600 dark:bg-zinc-800 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     <option value="">All Categories</option>
                     @foreach($categories as $category)
@@ -27,7 +27,7 @@
             {{-- Sort By --}}
             <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sort By</label>
-                <select wire:model.live="sortBy"
+                <select wire:model.defer="sortBy"
                         class="w-full border-gray-300 dark:border-zinc-600 dark:bg-zinc-800 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                     <option value="name">Name</option>
                     <option value="rent_price">Price (Low to High)</option>
