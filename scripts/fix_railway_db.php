@@ -5,6 +5,7 @@
  * Script ini akan merubah metode autentikasi user root agar kompatibel dengan PHP.
  */
 
+// Kredensial terbaru dari MySQL yamabiko
 $host = 'yamabiko.proxy.rlwy.net';
 $port = 41375;
 $db   = 'railway';
@@ -34,10 +35,7 @@ try {
 } catch (PDOException $e) {
     echo "ERROR: Could not connect to database.\n";
     echo "Message: " . $e->getMessage() . "\n";
-    if (strpos($e->getMessage(), 'caching_sha2_password') !== false) {
-        echo "\nTips: Jika local PHP Anda juga tidak mendukung caching_sha2_password, \n";
-        echo "gunakan tool seperti TablePlus, Beekeeper Studio, atau MySQL Workbench \n";
-        echo "untuk menjalankan query ini secara manual:\n\n";
-        echo "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '$pass';\n";
-    }
+    echo "\nJika error terus berlanjut, Anda bisa mencoba menggunakan tool GUI \n";
+    echo "seperti TablePlus atau Beekeeper Studio untuk menjalankan query ini:\n\n";
+    echo "ALTER USER 'root'@'%' IDENTIFIED WITH mysql_native_password BY '$pass';\n";
 }
