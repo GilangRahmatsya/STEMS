@@ -4,6 +4,7 @@ echo "Starting deployment optimizations..."
 
 # Fix MySQL authentication plugin mismatch (for PHP compatibility)
 echo "Ensuring MySQL authentication compatibility..."
+# Use internal service name if possible, or fall back to variables
 mysql -h $DB_HOST -u $DB_USERNAME -p$DB_PASSWORD -P $DB_PORT -e "ALTER USER '$DB_USERNAME'@'%' IDENTIFIED WITH mysql_native_password BY '$DB_PASSWORD'; FLUSH PRIVILEGES;" || echo "Notice: MySQL auth fix skipped or already applied."
 
 # Run migrations
